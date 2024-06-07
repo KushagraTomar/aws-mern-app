@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const path = require("path");  
 
 const userRoutes = require("./routes/userRoutes");
 
@@ -17,6 +18,14 @@ app.use(bodyParser.json({}));
 app.use(cors());
 
 app.use("/user", userRoutes);
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, "../client/build")));
+
+// The "catchall" handler: for any request that doesn't match one above, send back React's index.html file.
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+});
 
 // error handling to handle unknown http request
 app.use((req, res, next) => {
